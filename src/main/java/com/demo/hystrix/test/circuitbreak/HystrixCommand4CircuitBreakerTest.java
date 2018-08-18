@@ -22,12 +22,14 @@ public class HystrixCommand4CircuitBreakerTest extends HystrixCommand<String> {
                 .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("CircuitBreakerTest"))
                 .andThreadPoolPropertiesDefaults(	// 配置线程池
                 		HystrixThreadPoolProperties.Setter()
-                		.withCoreSize(200)	// 配置线程池里的线程数，设置足够多线程，以防未熔断却打满线程池而出发降级
+						// 配置线程池里的线程数，设置足够多线程，以防未熔断却打满线程池而出发降级
+                		.withCoreSize(200)
                 )
                 .andCommandPropertiesDefaults(	// 配置熔断器
                 		HystrixCommandProperties.Setter()
                 		.withCircuitBreakerEnabled(true)
 						//10s内至少请求3次
+						.withMetricsRollingStatisticalWindowInMilliseconds(10000)
                 		.withCircuitBreakerRequestVolumeThreshold(3)
 						//默认:50%。当出错率超过50%后熔断器启动.
                 		.withCircuitBreakerErrorThresholdPercentage(50)
@@ -40,21 +42,30 @@ public class HystrixCommand4CircuitBreakerTest extends HystrixCommand<String> {
         this.name = name;
     }
 
-    @Override
+	/**
+	 * 正常逻辑
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
     protected String run() throws Exception {
-    	System.out.println("running run() :" + name);
     	int num = Integer.valueOf(name);
-    	if(num % 2 == 0 && num < 10) {	// 直接返回
-    		return name;
-    	} else {	// 无限循环模拟超时
-    		int j = 0;
-        	while (true) {
-        		j++;
-        	}
+		// 模拟执行成功
+    	if(num % 2 == 0 && num < 10) {
+    		return "success: " + name;
+    	} else {
+			// 模拟异常
+    		while (true) {
+
+			}
     	}
     }
 
-    @Override
+	/**
+	 * 异常逻辑
+	 * @return
+	 */
+	@Override
     protected String getFallback() {
         return "CircuitBreaker fallback: " + name;
     }
@@ -65,7 +76,7 @@ public class HystrixCommand4CircuitBreakerTest extends HystrixCommand<String> {
         public void testSynchronous() throws IOException {
         	for(int i = 0; i < 50; i++) {
 	        	try {
-	        		System.out.println("===========" + new HystrixCommand4CircuitBreakerTest(String.valueOf(i)).execute());
+	        		System.out.println(new HystrixCommand4CircuitBreakerTest(String.valueOf(i)).execute());
 	        	} catch(Exception e) {
 	        		System.out.println("run()抛出HystrixBadRequestException时，被捕获到这里" + e.getCause());
 	        	}

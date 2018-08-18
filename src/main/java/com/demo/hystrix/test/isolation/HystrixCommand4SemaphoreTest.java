@@ -24,23 +24,37 @@ public class HystrixCommand4SemaphoreTest extends HystrixCommand<String> {
                                 HystrixCommandProperties.Setter()
                                         // 信号量隔离
                                         .withExecutionIsolationStrategy(ExecutionIsolationStrategy.SEMAPHORE)
+                                        //最大信号量 = 3
                                         .withExecutionIsolationSemaphoreMaxConcurrentRequests(3)
+                                        //降级并发量 = 1 改成2以后不会出现异常
                                         .withFallbackIsolationSemaphoreMaxConcurrentRequests(1)
                         )
         );
         this.name = name;
     }
 
+    /**
+     * 正常的业务逻辑
+     * @return
+     * @throws Exception
+     */
     @Override
     protected String run() throws Exception {
         return "run(): name=" + name + "，线程名是" + Thread.currentThread().getName();
     }
 
+    /**
+     * 降级逻辑
+     * @return
+     */
     @Override
     protected String getFallback() {
         return "getFallback(): name=" + name + "，线程名是" + Thread.currentThread().getName();
     }
 
+    /**
+     * 测试
+     */
     public static class UnitTest {
 
         @Test
@@ -53,7 +67,8 @@ public class HystrixCommand4SemaphoreTest extends HystrixCommand<String> {
                     // 自主创建线程来执行command，创造并发场景
                     Thread thread = new Thread(() -> {
                         // 这里执行两类command：HystrixCommand4SemaphoreTest设置了信号量隔离、HelloWorldHystrixCommand未设置信号量
-                        System.out.println("===========" + new HystrixCommand4SemaphoreTest("HystrixCommand4SemaphoreTest" + j).execute());    // 被信号量拒绝的线程从这里抛出异常
+                        // 被信号量拒绝的线程从这里抛出异常
+                        System.out.println(new HystrixCommand4SemaphoreTest("HystrixCommand4SemaphoreTest" + j).execute());
 
                     });
                     thread.start();
@@ -61,7 +76,7 @@ public class HystrixCommand4SemaphoreTest extends HystrixCommand<String> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Thread.sleep(4000);
+            Thread.sleep(3000);
         }
     }
 

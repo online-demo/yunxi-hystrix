@@ -28,13 +28,18 @@ public class HystrixCommand4ThreadPoolTest extends HystrixCommand<String> {
                 )
                 .andThreadPoolPropertiesDefaults(
                 	HystrixThreadPoolProperties.Setter()
-                		.withCoreSize(3)	// 配置线程池里的线程数
+                		.withCoreSize(3)	// 配置Hystrix线程池里的线程数
                 )
         );
         this.name = name;
     }
 
-    @Override
+	/**
+	 * 正常的业务逻辑
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
     protected String run() throws Exception {
     	//模拟耗时操作
     	TimeUnit.MILLISECONDS.sleep(2000);
@@ -42,30 +47,34 @@ public class HystrixCommand4ThreadPoolTest extends HystrixCommand<String> {
 		return name;
     }
 
-    @Override
+	/**
+	 * 降级逻辑
+	 * @return
+	 */
+	@Override
     protected String getFallback() {
-        return "fallback: " + name;
+        return "-----fallback-----" + name;
     }
 
-    public static class UnitTest {
+	/**
+	 * 测试
+	 */
+	public static class UnitTest {
 
         @Test
         public void testSynchronous() throws IOException {
         	for(int i = 0; i < 3; i++) {
 	        	try {
-//	        		assertEquals("fallback: Hlx", new HystrixCommand4ThreadPoolTest("Hlx").execute());
-//	        		System.out.println("===========" + new HystrixCommand4ThreadPoolTest("Hlx").execute());
 					//占有线程池中的线程
-	        		Future<String> future = new HystrixCommand4ThreadPoolTest("get available thread" + i).queue();
-	        		//强制阻塞
-//					System.out.println("future返回：" + future.get());
+	        		new HystrixCommand4ThreadPoolTest("AvailableThread" + i).queue();
 	        	} catch(Exception e) {
 	        		System.out.println("run()抛出HystrixBadRequestException时，被捕获到这里" + e.getCause());
 	        	}
         	}
         	for(int i = 0; i < 10; i++) {
 	        	try {
-	        		System.out.println("===========" + new HystrixCommand4ThreadPoolTest(" not get available thread" + i).execute());
+	        		//此时没有可用的线程，会走到getFallback降级逻辑中
+	        		System.out.println(new HystrixCommand4ThreadPoolTest("NoAvailableThread" + i).execute());
 	        	} catch(Exception e) {
 	        		System.out.println("run()抛出HystrixBadRequestException时，被捕获到这里" + e.getCause());
 	        	}

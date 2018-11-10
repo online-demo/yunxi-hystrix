@@ -17,25 +17,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class HystrixCommand4RequestCacheTest extends HystrixCommand<Boolean> {
 
-    private final int value;
-    private final String value1;
+    private final int key;
+    private final String value;
 
-    protected HystrixCommand4RequestCacheTest(int value, String value1) {
+    protected HystrixCommand4RequestCacheTest(int key, String value) {
         super(HystrixCommandGroupKey.Factory.asKey("RequestCacheCommandGroup"));
+        this.key = key;
         this.value = value;
-        this.value1 = value1;
     }
 
     // 返回结果是cache的value
     @Override
     protected Boolean run() {
-        return value == 0 || value % 2 == 0;
+        return key == 0 || key % 2 == 0;
     }
 
     // 构建cache的key
     @Override
     protected String getCacheKey() {
-        return String.valueOf(value) + value1;
+        return String.valueOf(key) + value;
     }
 
     public static class UnitTest {

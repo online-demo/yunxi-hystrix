@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+
 /**
- *
+ * @Author: 无双老师
+ * @Date: 2018/11/10
+ * @Description:
  * 测试线程池隔离策略
  * 设置线程池里的线程数＝3，然后循环>3次和<3次，最后查看当前所有线程名称
- * 
  */
 public class HystrixCommand4ThreadPoolTest extends HystrixCommand<String> {
 
@@ -28,7 +30,8 @@ public class HystrixCommand4ThreadPoolTest extends HystrixCommand<String> {
                 )
                 .andThreadPoolPropertiesDefaults(
                 	HystrixThreadPoolProperties.Setter()
-                		.withCoreSize(3)	// 配置Hystrix线程池里的线程数
+						// 配置Hystrix线程池里的线程数
+                		.withCoreSize(3)
                 )
         );
         this.name = name;
@@ -41,7 +44,7 @@ public class HystrixCommand4ThreadPoolTest extends HystrixCommand<String> {
 	 */
 	@Override
     protected String run() throws Exception {
-    	//模拟耗时操作
+    	//模拟耗时操作（如RPC接口耗时2s)）
     	TimeUnit.MILLISECONDS.sleep(2000);
 		System.out.println(Thread.currentThread().getName() + ": " + name);
 		return name;
@@ -57,7 +60,7 @@ public class HystrixCommand4ThreadPoolTest extends HystrixCommand<String> {
     }
 
 	/**
-	 * 测试
+	 * 测试线程池隔离
 	 */
 	public static class UnitTest {
 
@@ -81,14 +84,9 @@ public class HystrixCommand4ThreadPoolTest extends HystrixCommand<String> {
         	}
         	try {
         		TimeUnit.MILLISECONDS.sleep(2000);
-        	}catch(Exception e) {}
-        	System.out.println("------开始打印现有线程---------");
-        	Map<Thread, StackTraceElement[]> map=Thread.getAllStackTraces();
-        	for (Thread thread : map.keySet()) {
-				System.out.println(thread.getName());
+        	}catch(Exception e) {
+        		e.printStackTrace();
 			}
-        	System.out.println(map);
-        	System.out.println("thread num: " + map.size());
         }
     }
 

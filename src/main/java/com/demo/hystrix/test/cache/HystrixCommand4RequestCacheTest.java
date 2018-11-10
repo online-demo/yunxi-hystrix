@@ -9,6 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * @Author: 无双老师
+ * @Date: 2018/11/10
+ * @Description:
  * cache只有同在一个context中才生效
  * 通过HystrixRequestContext.initializeContext()初始化context，通过shutdown()关闭context
  */
@@ -37,6 +40,9 @@ public class HystrixCommand4RequestCacheTest extends HystrixCommand<Boolean> {
 
     public static class UnitTest {
 
+        /**
+         * 测试不使用缓存的场景
+         */
         @Test
         public void testWithoutCacheHits() {
             HystrixRequestContext context = HystrixRequestContext.initializeContext();
@@ -50,6 +56,9 @@ public class HystrixCommand4RequestCacheTest extends HystrixCommand<Boolean> {
             }
         }
 
+        /**
+         * 测试使用缓存的场景
+         */
         @Test
         public void testWithCacheHits() {
             //同一个请求上下文中

@@ -7,6 +7,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,17 +25,13 @@ public class HystrixCommand4RequestCollapsingTest {
             	
                 Future<String> f1 = new HelloWorldHystrixCollapser(1).queue();
                 Future<String> f2 = new HelloWorldHystrixCollapser(2).queue();
-                // 这条很可能会合并到f1和f2的批量请求中
-//                System.out.println(new HelloWorldHystrixCollapser(1).execute());
-                // 由于上面有IO打印，这条很可能不会合并到f1和f2的批量请求中
-//                System.out.println(new HelloWorldHystrixCollapser(1).execute());
+                // 这条很可能会合并到f1和f2的批量请求中，因为execute是阻塞的
+//                System.out.println("execute强制阻塞 : " + new HelloWorldHystrixCollapser(1).execute());
                 Future<String> f3 = new HelloWorldHystrixCollapser(3).queue();
                 Future<String> f4 = new HelloWorldHystrixCollapser(4).queue();
 
                 Future<String> f5 = new HelloWorldHystrixCollapser(5).queue();
-                // f5和f6，如果sleep时间够小则会合并，如果sleep时间够大则不会合并，默认10ms
-//                TimeUnit.MILLISECONDS.sleep(10);
-                Future<String> f6 = new HelloWorldHystrixCollapser(6).queue();              
+                Future<String> f6 = new HelloWorldHystrixCollapser(6).queue();
           
                 System.out.println(System.currentTimeMillis() + " : " + f1.get());
                 System.out.println(System.currentTimeMillis() + " : " + f2.get());

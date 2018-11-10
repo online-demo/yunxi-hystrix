@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * 
+ * @Author: 无双老师
+ * @Date: 2018/11/10
+ * @Description:
  * CircuitBreakerRequestVolumeThreshold设置为3，意味着10s内请求超过3次就触发熔断器
  * run()中无限循环使命令超时进入fallback，执行3次run后，将被熔断，进入降级，即不进入run()而直接进入fallback
  * 如果未熔断，但是threadpool被打满，仍然会降级，即不进入run()而直接进入fallback
@@ -55,9 +57,9 @@ public class HystrixCommand4CircuitBreakerTest extends HystrixCommand<String> {
     		return "success: " + name;
     	} else {
 			// 模拟异常
-    		while (true) {
+            while (true) {
 
-			}
+            }
     	}
     }
 
@@ -81,14 +83,6 @@ public class HystrixCommand4CircuitBreakerTest extends HystrixCommand<String> {
 	        		System.out.println("run()抛出HystrixBadRequestException时，被捕获到这里" + e.getCause());
 	        	}
         	}
-
-        	System.out.println("------开始打印现有线程---------");
-        	Map<Thread, StackTraceElement[]> map=Thread.getAllStackTraces();
-        	for (Thread thread : map.keySet()) {
-				System.out.println(thread.getName());
-			}
-        	System.out.println("thread num: " + map.size());
-        	
         }
     }
 

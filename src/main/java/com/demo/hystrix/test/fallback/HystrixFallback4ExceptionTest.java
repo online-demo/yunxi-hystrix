@@ -1,9 +1,5 @@
 package com.demo.hystrix.test.fallback;
 
-/**
- *  降级策略demo
- */
-
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
@@ -13,13 +9,15 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 /**
+ * @Author: 无双老师
+ * @Date: 2018/11/10
+ * @Description:
  *
  * 以下四种情况将触发getFallback调用：
  * 1）run()方法抛出非HystrixBadRequestException异常
  * 2）run()方法调用超时
  * 3）熔断器开启拦截调用
- * 4）线程池/队列/信号量是否跑满
- *
+ * 4）线程池/队列/信号量跑满
  * 实现getFallback()后，执行命令时遇到以上4种情况将被fallback接管，不会抛出异常或其他
  */
 public class HystrixFallback4ExceptionTest extends HystrixCommand<String> {
@@ -36,15 +34,15 @@ public class HystrixFallback4ExceptionTest extends HystrixCommand<String> {
     	/*---------------会触发fallback的case-------------------*/
         // 无限循环，实际上属于超时
     	int j = 0;
-    	while (true) {
-    		j++;
-    	}
+//    	while (true) {
+//    		j++;
+//    	}
 
         // 除零异常
 //    	int i = 1/0;
 
         // 主动抛出异常
-//        throw new HystrixTimeoutException();
+        throw new HystrixTimeoutException();
 //        throw new RuntimeException("this command will trigger fallback");
 //        throw new Exception("this command will trigger fallback");
 //    	throw new HystrixRuntimeException(FailureType.BAD_REQUEST_EXCEPTION, commandClass, message, cause, fallbackException);
@@ -76,7 +74,7 @@ public class HystrixFallback4ExceptionTest extends HystrixCommand<String> {
             try {
                 System.out.println(new HystrixFallback4ExceptionTest("ExceptionTest").execute());
             } catch(Exception e) {
-                System.out.println("run()抛出HystrixBadRequestException时，会被捕获到这里" + e.getCause());
+                System.out.println("run()抛出HystrixBadRequestException时，会被捕获到这里" + e);
             }
         }
     }

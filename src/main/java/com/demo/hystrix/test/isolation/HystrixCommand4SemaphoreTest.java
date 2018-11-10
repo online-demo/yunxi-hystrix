@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 /**
+ * @Author: 无双老师
+ * @Date: 2018/11/10
+ * @Description:
  * 测试信号量隔离策略
  * 默认执行run()用的是主线程，为了模拟并行执行command，这里我们自己创建多个线程来执行command
  * 设置ExecutionIsolationSemaphoreMaxConcurrentRequests为3，意味着信号量最多允许执行run的并发数为3，超过则触发降级，即不执行run而执行getFallback
@@ -27,7 +30,7 @@ public class HystrixCommand4SemaphoreTest extends HystrixCommand<String> {
                                         //最大信号量 = 3
                                         .withExecutionIsolationSemaphoreMaxConcurrentRequests(3)
                                         //降级并发量 = 1 改成2以后不会出现异常
-                                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(1)
+                                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(2)
                         )
         );
         this.name = name;

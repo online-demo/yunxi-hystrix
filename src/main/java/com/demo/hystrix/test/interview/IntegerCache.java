@@ -8,11 +8,11 @@ package com.demo.hystrix.test.interview;
 public class IntegerCache {
 
     public static void main(String[] args) {
-        testNewInteger();
-        testIntegerUnboxing();
-        testIntegerAutoBoxing();
+//        testNewInteger();
+//        testIntegerUnboxing();
+//        testIntegerAutoBoxing();
         testIntegerAutoBoxing2();
-        testIntegerAutoBoxing3();
+//        testIntegerAutoBoxing3();
     }
 
     /**
@@ -48,8 +48,8 @@ public class IntegerCache {
      * 测试自动装箱valueOf
      */
     private static void testIntegerAutoBoxing2() {
-        Integer int1 = 127;
-        Integer int2 = 127;
+        Integer int1 = 128;
+        Integer int2 = 128;
         System.out.println(int1 == int2);
     }
 
@@ -57,8 +57,8 @@ public class IntegerCache {
      * 测试自动装箱valueOf
      */
     private static void testIntegerAutoBoxing3() {
-        Integer int1 = 128;
-        Integer int2 = 128;
+        Integer int1 = -1;
+        Integer int2 = -1;
         System.out.println(int1 == int2);
     }
 }

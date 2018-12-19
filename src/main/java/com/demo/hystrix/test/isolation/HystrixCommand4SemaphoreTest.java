@@ -30,7 +30,7 @@ public class HystrixCommand4SemaphoreTest extends HystrixCommand<String> {
                                         //最大信号量 = 3
                                         .withExecutionIsolationSemaphoreMaxConcurrentRequests(3)
                                         //降级并发量 = 1 改成2以后不会出现异常
-                                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(2)
+                                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(1)
                         )
         );
         this.name = name;
